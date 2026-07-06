@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Grades | School Management Dashboard</title>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <link href="styles.css" rel="stylesheet" />
+    <link href="css/grades.css" rel="stylesheet" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <div id="sidebarMount"></div>
+
+      <main class="main-content">
+        <header class="topbar">
+          <div>
+            <p class="page-kicker">Academic Records</p>
+            <h1 class="page-title">Grades</h1>
+            <p class="page-subtitle">
+              Record marks, calculate letter grades, filter assessments, and
+              preview report cards.
+            </p>
+          </div>
+          <button
+            class="btn btn-ghost mobile-menu-btn"
+            type="button"
+            data-toggle-sidebar
+          >
+            <i class="bi bi-list"></i>
+            Menu
+          </button>
+        </header>
+
+        <section class="grades-workspace">
+          <div class="grade-stats" id="gradeStats"></div>
+
+          <section class="two-column">
+            <div class="form-panel">
+              <div
+                class="d-flex align-items-start justify-content-between flex-wrap gap-2 mb-3"
+              >
+                <div>
+                  <h2 class="section-title" id="gradeFormTitle">
+                    Record Grade
+                  </h2>
+                  <p class="section-subtitle">
+                    Marks automatically convert into percentage and letter
+                    grade.
+                  </p>
+                </div>
+                <button
+                  class="btn btn-ghost"
+                  type="button"
+                  id="resetGradeFormBtn"
+                >
+                  <i class="bi bi-arrow-counterclockwise"></i>
+                  Reset
+                </button>
+              </div>
+
+              <form id="gradeForm">
+                <input type="hidden" id="gradeId" />
+
+                <div class="form-grid two">
+                  <div>
+                    <label class="form-label" for="studentId">Student</label>
+                    <select
+                      class="form-select"
+                      id="studentId"
+                      required
+                    ></select>
+                  </div>
+
+                  <div>
+                    <label class="form-label" for="subject">Subject</label>
+                    <input
+                      class="form-control"
+                      id="subject"
+                      required
+                      placeholder="Mathematics"
+                    />
+                  </div>
+
+                  <div>
+                    <label class="form-label" for="examType">Exam Type</label>
+                    <select class="form-select" id="examType" required>
+                      <option>Quiz</option>
+                      <option>Midterm</option>
+                      <option>Final</option>
+                      <option>Assignment</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label class="form-label" for="term">Term / Session</label>
+                    <input class="form-control" id="term" required />
+                  </div>
+
+                  <div>
+                    <label class="form-label" for="marksObtained"
+                      >Marks Obtained</label
+                    >
+                    <input
+                      class="form-control"
+                      id="marksObtained"
+                      type="number"
+                      min="0"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label class="form-label" for="totalMarks"
+                      >Total Marks</label
+                    >
+                    <input
+                      class="form-control"
+                      id="totalMarks"
+                      type="number"
+                      min="1"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div class="action-row mt-3">
+                  <button class="btn btn-primary" type="submit">
+                    <i class="bi bi-save-fill"></i>
+                    Save Grade
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <aside class="preview-panel">
+              <h2 class="section-title">Report Card Preview</h2>
+              <p class="section-subtitle">
+                Select a student to generate a simple report preview.
+              </p>
+
+              <div class="mb-3">
+                <label class="form-label" for="reportStudentId">Student</label>
+                <select class="form-select" id="reportStudentId"></select>
+              </div>
+
+              <div id="reportCardMount"></div>
+            </aside>
+          </section>
+
+          <section class="table-panel">
+            <h2 class="section-title">Grade Records</h2>
+            <p class="section-subtitle">
+              Search and filter by class, student, subject, and exam type.
+            </p>
+
+            <div class="filter-grid mb-3">
+              <div>
+                <label class="form-label" for="gradeSearch">Search</label>
+                <input
+                  class="form-control"
+                  id="gradeSearch"
+                  placeholder="Search grades..."
+                />
+              </div>
+
+              <div>
+                <label class="form-label" for="filterClass">Class</label>
+                <select class="form-select" id="filterClass"></select>
+              </div>
+
+              <div>
+                <label class="form-label" for="filterSubject">Subject</label>
+                <input
+                  class="form-control"
+                  id="filterSubject"
+                  placeholder="Subject"
+                />
+              </div>
+
+              <div>
+                <label class="form-label" for="filterExamType">Exam Type</label>
+                <select class="form-select" id="filterExamType">
+                  <option value="">All exam types</option>
+                  <option>Quiz</option>
+                  <option>Midterm</option>
+                  <option>Final</option>
+                  <option>Assignment</option>
+                </select>
+              </div>
+            </div>
+
+            <div id="gradesTableMount"></div>
+          </section>
+        </section>
+      </main>
+    </div>
+
+    <div class="status-area" id="statusArea"></div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/shared.js"></script>
+    <script src="js/grades.js"></script>
+  </body>
+</html>

@@ -1,0 +1,79 @@
+.student-workspace {
+  display: grid;
+  gap: 1rem;
+}
+
+.student-status-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
+.student-mini-stat {
+  padding: 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: rgba(34, 211, 238, 0.07);
+}
+
+.student-mini-stat span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.student-mini-stat strong {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 1.35rem;
+}
+
+.student-table-name {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.student-roll {
+  color: var(--cyan);
+  font-family: var(--mono);
+  font-size: 0.82rem;
+}
+
+.student-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 0.85rem;
+}
+
+.student-profile-grid {
+  display: grid;
+  grid-template-columns: 90px 1fr;
+  gap: 0.8rem;
+}
+
+.student-profile-code {
+  display: grid;
+  place-items: center;
+  min-height: 90px;
+  border: 1px dashed var(--border);
+  border-radius: 16px;
+  color: var(--cyan);
+  background: rgba(34, 211, 238, 0.08);
+  font-family: var(--mono);
+  font-weight: 900;
+}
+
+@media (max-width: 900px) {
+  .student-status-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .student-status-strip,
+  .student-profile-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,105 @@
+.dashboard-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.65fr);
+  gap: 1rem;
+}
+
+.dashboard-charts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.chart-card {
+  padding: 1rem;
+}
+
+.quick-actions {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.action-card {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.95rem;
+  transition:
+    transform 0.18s ease,
+    border-color 0.18s ease;
+}
+
+.action-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--cyan);
+}
+
+.action-icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  color: var(--cyan);
+  background: var(--cyan-soft);
+}
+
+.action-card h3 {
+  margin: 0;
+  font-size: 0.98rem;
+}
+
+.action-card p {
+  margin: 0.15rem 0 0;
+  color: var(--muted);
+  font-size: 0.84rem;
+}
+
+.activity-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.activity-item {
+  position: relative;
+  padding: 0.8rem 0.8rem 0.8rem 1rem;
+  border: 1px solid rgba(154, 171, 199, 0.14);
+  border-radius: 14px;
+  background: rgba(34, 211, 238, 0.06);
+}
+
+.activity-item::before {
+  content: "";
+  position: absolute;
+  left: -1px;
+  top: 0.8rem;
+  bottom: 0.8rem;
+  width: 3px;
+  border-radius: 999px;
+  background: var(--cyan);
+}
+
+.activity-title {
+  margin: 0;
+  font-weight: 800;
+}
+
+.activity-detail {
+  margin: 0.15rem 0 0;
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.activity-time {
+  margin: 0.3rem 0 0;
+  color: var(--cyan);
+  font-family: var(--mono);
+  font-size: 0.74rem;
+}
+
+@media (max-width: 1180px) {
+  .dashboard-layout,
+  .dashboard-charts {
+    grid-template-columns: 1fr;
+  }
+}

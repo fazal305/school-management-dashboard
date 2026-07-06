@@ -1,0 +1,81 @@
+.timetable-page {
+  display: grid;
+  gap: 1rem;
+}
+
+.timetable-grid-wrap {
+  overflow-x: auto;
+}
+
+.timetable-grid {
+  display: grid;
+  grid-template-columns: 120px repeat(5, minmax(190px, 1fr));
+  min-width: 1080px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: rgba(4, 7, 18, 0.44);
+}
+
+.timetable-cell {
+  min-height: 112px;
+  padding: 0.75rem;
+  border-right: 1px solid rgba(154, 171, 199, 0.13);
+  border-bottom: 1px solid rgba(154, 171, 199, 0.13);
+}
+
+.timetable-head {
+  min-height: auto;
+  color: var(--cyan);
+  background: rgba(34, 211, 238, 0.1);
+  font-weight: 900;
+  text-align: center;
+}
+
+.timetable-period {
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-weight: 800;
+}
+
+.timetable-entry {
+  height: 100%;
+  padding: 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: linear-gradient(
+    135deg,
+    rgba(34, 211, 238, 0.12),
+    rgba(168, 85, 247, 0.1)
+  );
+}
+
+.timetable-entry h4 {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 850;
+}
+
+.timetable-entry p {
+  margin: 0.18rem 0 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.timetable-entry-actions {
+  display: flex;
+  gap: 0.35rem;
+  margin-top: 0.55rem;
+}
+
+.timetable-conflict {
+  border-color: var(--red);
+  box-shadow: 0 0 0 0.15rem rgba(251, 113, 133, 0.14);
+}
+
+.timetable-filter-note {
+  color: var(--muted);
+  font-size: 0.86rem;
+}

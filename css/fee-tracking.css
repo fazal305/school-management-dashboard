@@ -1,0 +1,97 @@
+.fee-workspace {
+  display: grid;
+  gap: 1rem;
+}
+
+.fee-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
+.fee-summary-card {
+  padding: 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: rgba(34, 211, 238, 0.07);
+}
+
+.fee-summary-card span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.fee-summary-card strong {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 1.3rem;
+}
+
+.receipt-preview {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: rgba(4, 7, 18, 0.3);
+}
+
+.receipt-header {
+  padding: 1rem;
+  background: linear-gradient(135deg, var(--green-soft), var(--cyan-soft));
+}
+
+.receipt-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 900;
+}
+
+.receipt-header p {
+  margin: 0.25rem 0 0;
+  color: var(--muted);
+}
+
+.receipt-body {
+  display: grid;
+  gap: 0.65rem;
+  padding: 1rem;
+}
+
+.receipt-line {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 0.55rem;
+  border-bottom: 1px solid rgba(154, 171, 199, 0.13);
+}
+
+.receipt-line span {
+  color: var(--muted);
+}
+
+.receipt-line strong {
+  text-align: right;
+}
+
+.receipt-total {
+  color: var(--cyan);
+  font-size: 1.1rem;
+}
+
+.fee-ledger-code {
+  color: var(--cyan);
+  font-family: var(--mono);
+  font-size: 0.8rem;
+}
+
+@media (max-width: 980px) {
+  .fee-summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .fee-summary-grid {
+    grid-template-columns: 1fr;
+  }
+}
