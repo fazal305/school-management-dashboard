@@ -15,6 +15,8 @@ School Management Dashboard is a professional multi-page frontend application fo
 
 The interface is designed as a polished dark enterprise dashboard with responsive layouts, reusable navigation, module-specific workflows, Chart.js analytics, and practical CRUD behavior.
 
+This is the primary build of a shared admin-dashboard shell (sidebar navigation, KPI cards, Chart.js analytics, dark enterprise theme) that's also adapted for a [CRM](https://github.com/fazal305/crm-dashboard), an [HR portal](https://github.com/fazal305/hr-management-portal), and a [CMS admin panel](https://github.com/fazal305/cms-admin-panel) — each swaps in domain-specific data and workflows on top of the same underlying system.
+
 ## Pages
 
 - Dashboard: `index.html`
