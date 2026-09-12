@@ -263,6 +263,12 @@ body.light-mode .topbar {
   backdrop-filter: blur(18px);
 }
 
+.table-panel,
+.form-panel,
+.chart-card {
+  min-width: 0;
+}
+
 .panel,
 .form-panel,
 .table-panel,
