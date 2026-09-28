@@ -1,53 +1,61 @@
 function getFeeStatusBadgeClass(status) {
-    if (status === "Paid") return "badge-paid";
-    if (status === "Partial") return "badge-partial";
-    if (status === "Unpaid") return "badge-unpaid";
-    return "badge-overdue";
+  if (status === "Paid") return "badge-paid";
+  if (status === "Partial") return "badge-partial";
+  if (status === "Unpaid") return "badge-unpaid";
+  return "badge-overdue";
 }
 
 function getStudentClassForFee(workspace, studentId) {
-    const student = workspace.students.find((item) => item.id === studentId);
-    return student ? `${student.classGrade}-${student.section}` : "Unknown";
+  const student = workspace.students.find((item) => item.id === studentId);
+  return student ? `${student.classGrade}-${student.section}` : "Unknown";
 }
 
 function getFilteredFeeRecords() {
-    const workspace = loadWorkspace();
-    const query = $("#feeSearch").val().toLowerCase().trim();
-    const classGrade = $("#filterClass").val();
-    const status = $("#filterStatus").val();
-    const month = $("#filterMonth").val().toLowerCase().trim();
+  const workspace = loadWorkspace();
+  const query = $("#feeSearch").val().toLowerCase().trim();
+  const classGrade = $("#filterClass").val();
+  const status = $("#filterStatus").val();
+  const month = $("#filterMonth").val().toLowerCase().trim();
 
-    return workspace.feeRecords.filter((record) => {
-        const student = workspace.students.find((item) => item.id === record.studentId);
-        const studentName = getStudentName(workspace, record.studentId);
-        const searchable = [
-            studentName,
-            record.month,
-            record.status,
-            record.dueDate,
-            record.paidDate
-        ].join(" ").toLowerCase();
+  return workspace.feeRecords.filter((record) => {
+    const student = workspace.students.find(
+      (item) => item.id === record.studentId,
+    );
+    const studentName = getStudentName(workspace, record.studentId);
+    const searchable = [
+      studentName,
+      record.month,
+      record.status,
+      record.dueDate,
+      record.paidDate,
+    ]
+      .join(" ")
+      .toLowerCase();
 
-        return (!query || searchable.includes(query)) &&
-            (!classGrade || (student && student.classGrade === classGrade)) &&
-            (!status || record.status === status) &&
-            (!month || record.month.toLowerCase().includes(month));
-    });
+    return (
+      (!query || searchable.includes(query)) &&
+      (!classGrade || (student && student.classGrade === classGrade)) &&
+      (!status || record.status === status) &&
+      (!month || record.month.toLowerCase().includes(month))
+    );
+  });
 }
 
 function renderFeeRecords() {
-    const workspace = loadWorkspace();
-    const records = getFilteredFeeRecords();
+  const workspace = loadWorkspace();
+  const records = getFilteredFeeRecords();
 
-    renderFeeSummary();
-    loadFeeReceiptOptions();
+  renderFeeSummary();
+  loadFeeReceiptOptions();
 
-    if (!records.length) {
-        $("#feeRecordsTableMount").html(renderEmptyState("Try changing your fee ledger filters."));
-        return;
-    }
+  if (!records.length) {
+    $("#feeRecordsTableMount").html(
+      renderEmptyState("Try changing your fee ledger filters."),
+    );
+    return;
+  }
 
-    $("#feeRecordsTableMount").html(`
+  $("#feeRecordsTableMount").html(`
     <div class="table-responsive">
       <table class="table table-hover">
         <thead>
@@ -65,11 +73,15 @@ function renderFeeRecords() {
           </tr>
         </thead>
         <tbody>
-          ${records.map((record) => {
-        const total = calculateFeeTotal(record);
-        const pending = Math.max(total - Number(record.amountPaid || 0), 0);
+          ${records
+            .map((record) => {
+              const total = calculateFeeTotal(record);
+              const pending = Math.max(
+                total - Number(record.amountPaid || 0),
+                0,
+              );
 
-        return `
+              return `
               <tr>
                 <td><strong>${escapeHtml(getStudentName(workspace, record.studentId))}</strong></td>
                 <td>${escapeHtml(getStudentClassForFee(workspace, record.studentId))}</td>
@@ -89,7 +101,8 @@ function renderFeeRecords() {
                 </td>
               </tr>
             `;
-    }).join("")}
+            })
+            .join("")}
         </tbody>
       </table>
     </div>
@@ -97,146 +110,155 @@ function renderFeeRecords() {
 }
 
 function createFeeRecord() {
-    const workspace = loadWorkspace();
-    const feeId = $("#feeId").val();
-    const now = new Date().toISOString();
+  const workspace = loadWorkspace();
+  const feeId = $("#feeId").val();
+  const now = new Date().toISOString();
 
-    const feeData = {
-        id: feeId || generateId("fee"),
-        studentId: $("#studentId").val(),
-        month: $("#month").val().trim(),
-        tuitionFee: Number($("#tuitionFee").val()),
-        transportFee: Number($("#transportFee").val()),
-        examFee: Number($("#examFee").val()),
-        amountPaid: Number($("#amountPaid").val()),
-        status: $("#status").val(),
-        dueDate: $("#dueDate").val(),
-        paidDate: $("#paidDate").val(),
-        createdAt: now,
-        updatedAt: now
-    };
+  const feeData = {
+    id: feeId || generateId("fee"),
+    studentId: $("#studentId").val(),
+    month: $("#month").val().trim(),
+    tuitionFee: Number($("#tuitionFee").val()),
+    transportFee: Number($("#transportFee").val()),
+    examFee: Number($("#examFee").val()),
+    amountPaid: Number($("#amountPaid").val()),
+    status: $("#status").val(),
+    dueDate: $("#dueDate").val(),
+    paidDate: $("#paidDate").val(),
+    createdAt: now,
+    updatedAt: now,
+  };
 
-    if (!feeData.studentId || !feeData.month || !feeData.dueDate) {
-        showStatus("Please complete the required fee fields.", "warning");
-        return;
-    }
+  if (!feeData.studentId || !feeData.month || !feeData.dueDate) {
+    showStatus("Please complete the required fee fields.", "warning");
+    return;
+  }
 
-    const total = calculateFeeTotal(feeData);
+  const total = calculateFeeTotal(feeData);
 
-    if (feeData.amountPaid > total) {
-        showStatus("Amount paid cannot exceed the total fee.", "danger");
-        return;
-    }
+  if (feeData.amountPaid > total) {
+    showStatus("Amount paid cannot exceed the total fee.", "danger");
+    return;
+  }
 
-    if (feeData.status === "Paid" && feeData.amountPaid < total) {
-        showStatus("Paid records must have the full amount paid.", "warning");
-        return;
-    }
+  if (feeData.status === "Paid" && feeData.amountPaid < total) {
+    showStatus("Paid records must have the full amount paid.", "warning");
+    return;
+  }
 
-    if (feeData.status !== "Paid" && feeData.amountPaid === total) {
-        showStatus("Use Paid status when the full amount has been received.", "warning");
-        return;
-    }
+  if (feeData.status !== "Paid" && feeData.amountPaid === total) {
+    showStatus(
+      "Use Paid status when the full amount has been received.",
+      "warning",
+    );
+    return;
+  }
 
-    if (feeId) {
-        const index = workspace.feeRecords.findIndex((record) => record.id === feeId);
-        if (index === -1) return;
+  if (feeId) {
+    const index = workspace.feeRecords.findIndex(
+      (record) => record.id === feeId,
+    );
+    if (index === -1) return;
 
-        feeData.createdAt = workspace.feeRecords[index].createdAt;
-        workspace.feeRecords[index] = feeData;
+    feeData.createdAt = workspace.feeRecords[index].createdAt;
+    workspace.feeRecords[index] = feeData;
 
-        workspace.activityLog.unshift({
-            id: generateId("log"),
-            module: "Fees",
-            action: "Updated fee record",
-            detail: `Updated ${feeData.month} fee for ${getStudentName(workspace, feeData.studentId)}`,
-            createdAt: now
-        });
+    workspace.activityLog.unshift({
+      id: generateId("log"),
+      module: "Fees",
+      action: "Updated fee record",
+      detail: `Updated ${feeData.month} fee for ${getStudentName(workspace, feeData.studentId)}`,
+      createdAt: now,
+    });
 
-        showStatus("Fee record updated successfully.", "success");
-    } else {
-        workspace.feeRecords.push(feeData);
+    showStatus("Fee record updated successfully.", "success");
+  } else {
+    workspace.feeRecords.push(feeData);
 
-        workspace.activityLog.unshift({
-            id: generateId("log"),
-            module: "Fees",
-            action: "Recorded fee payment",
-            detail: `Recorded ${feeData.month} fee for ${getStudentName(workspace, feeData.studentId)}`,
-            createdAt: now
-        });
+    workspace.activityLog.unshift({
+      id: generateId("log"),
+      module: "Fees",
+      action: "Recorded fee payment",
+      detail: `Recorded ${feeData.month} fee for ${getStudentName(workspace, feeData.studentId)}`,
+      createdAt: now,
+    });
 
-        showStatus("Fee record created successfully.", "success");
-    }
+    showStatus("Fee record created successfully.", "success");
+  }
 
-    workspace.activityLog = workspace.activityLog.slice(0, 50);
-    saveWorkspace(workspace);
-    resetFeeForm();
-    renderFeeRecords();
-    renderReceiptPreview($("#receiptFeeId").val());
+  workspace.activityLog = workspace.activityLog.slice(0, 50);
+  saveWorkspace(workspace);
+  resetFeeForm();
+  renderFeeRecords();
+  renderReceiptPreview($("#receiptFeeId").val());
 }
 
 function editFeeRecord(id) {
-    const workspace = loadWorkspace();
-    const record = workspace.feeRecords.find((item) => item.id === id);
+  const workspace = loadWorkspace();
+  const record = workspace.feeRecords.find((item) => item.id === id);
 
-    if (!record) {
-        showStatus("Fee record was not found.", "danger");
-        return;
-    }
+  if (!record) {
+    showStatus("Fee record was not found.", "danger");
+    return;
+  }
 
-    $("#feeFormTitle").text("Edit Fee Record");
-    $("#feeId").val(record.id);
-    $("#studentId").val(record.studentId);
-    $("#month").val(record.month);
-    $("#tuitionFee").val(record.tuitionFee);
-    $("#transportFee").val(record.transportFee);
-    $("#examFee").val(record.examFee);
-    $("#amountPaid").val(record.amountPaid);
-    $("#status").val(record.status);
-    $("#dueDate").val(record.dueDate);
-    $("#paidDate").val(record.paidDate);
+  $("#feeFormTitle").text("Edit Fee Record");
+  $("#feeId").val(record.id);
+  $("#studentId").val(record.studentId);
+  $("#month").val(record.month);
+  $("#tuitionFee").val(record.tuitionFee);
+  $("#transportFee").val(record.transportFee);
+  $("#examFee").val(record.examFee);
+  $("#amountPaid").val(record.amountPaid);
+  $("#status").val(record.status);
+  $("#dueDate").val(record.dueDate);
+  $("#paidDate").val(record.paidDate);
 
-    window.scrollTo({ top: 0, behavior: "smooth" });
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 function deleteFeeRecord(id) {
-    const workspace = loadWorkspace();
-    const record = workspace.feeRecords.find((item) => item.id === id);
+  const workspace = loadWorkspace();
+  const record = workspace.feeRecords.find((item) => item.id === id);
 
-    if (!record) {
-        showStatus("Fee record was not found.", "danger");
-        return;
-    }
+  if (!record) {
+    showStatus("Fee record was not found.", "danger");
+    return;
+  }
 
-    if (!confirm(`Delete ${record.month} fee record for ${getStudentName(workspace, record.studentId)}?`)) {
-        return;
-    }
+  if (
+    !confirm(
+      `Delete ${record.month} fee record for ${getStudentName(workspace, record.studentId)}?`,
+    )
+  ) {
+    return;
+  }
 
-    workspace.feeRecords = workspace.feeRecords.filter((item) => item.id !== id);
-    workspace.activityLog.unshift({
-        id: generateId("log"),
-        module: "Fees",
-        action: "Deleted fee record",
-        detail: `Deleted ${record.month} fee for ${getStudentName(workspace, record.studentId)}`,
-        createdAt: new Date().toISOString()
-    });
+  workspace.feeRecords = workspace.feeRecords.filter((item) => item.id !== id);
+  workspace.activityLog.unshift({
+    id: generateId("log"),
+    module: "Fees",
+    action: "Deleted fee record",
+    detail: `Deleted ${record.month} fee for ${getStudentName(workspace, record.studentId)}`,
+    createdAt: new Date().toISOString(),
+  });
 
-    workspace.activityLog = workspace.activityLog.slice(0, 50);
-    saveWorkspace(workspace);
-    renderFeeRecords();
-    renderReceiptPreview($("#receiptFeeId").val());
-    showStatus("Fee record deleted successfully.", "success");
+  workspace.activityLog = workspace.activityLog.slice(0, 50);
+  saveWorkspace(workspace);
+  renderFeeRecords();
+  renderReceiptPreview($("#receiptFeeId").val());
+  showStatus("Fee record deleted successfully.", "success");
 }
 
 function filterFeeRecords() {
-    renderFeeRecords();
+  renderFeeRecords();
 }
 
 function renderFeeSummary() {
-    const workspace = loadWorkspace();
-    const summary = calculateFeeSummary(workspace);
+  const workspace = loadWorkspace();
+  const summary = calculateFeeSummary(workspace);
 
-    $("#feeSummary").html(`
+  $("#feeSummary").html(`
     <div class="fee-summary-card"><span>Total Billed</span><strong>${escapeHtml(formatCurrency(summary.totalBilled))}</strong></div>
     <div class="fee-summary-card"><span>Total Collected</span><strong>${escapeHtml(formatCurrency(summary.totalCollected))}</strong></div>
     <div class="fee-summary-card"><span>Total Pending</span><strong>${escapeHtml(formatCurrency(summary.totalPending))}</strong></div>
@@ -245,20 +267,24 @@ function renderFeeSummary() {
 }
 
 function renderReceiptPreview(feeId) {
-    const workspace = loadWorkspace();
-    const record = workspace.feeRecords.find((item) => item.id === feeId) || workspace.feeRecords[0];
+  const workspace = loadWorkspace();
+  const record =
+    workspace.feeRecords.find((item) => item.id === feeId) ||
+    workspace.feeRecords[0];
 
-    if (!record) {
-        $("#receiptPreviewMount").html(renderEmptyState("No fee records available for receipt preview."));
-        return;
-    }
+  if (!record) {
+    $("#receiptPreviewMount").html(
+      renderEmptyState("No fee records available for receipt preview."),
+    );
+    return;
+  }
 
-    $("#receiptFeeId").val(record.id);
+  $("#receiptFeeId").val(record.id);
 
-    const total = calculateFeeTotal(record);
-    const pending = Math.max(total - Number(record.amountPaid || 0), 0);
+  const total = calculateFeeTotal(record);
+  const pending = Math.max(total - Number(record.amountPaid || 0), 0);
 
-    $("#receiptPreviewMount").html(`
+  $("#receiptPreviewMount").html(`
     <article class="receipt-preview">
       <div class="receipt-header">
         <h3>${escapeHtml(workspace.settings.schoolName)}</h3>
@@ -285,77 +311,92 @@ function renderReceiptPreview(feeId) {
 }
 
 function exportFeeLedger() {
-    const workspace = loadWorkspace();
-    const exportData = {
-        exportedAt: new Date().toISOString(),
-        schoolName: workspace.settings.schoolName,
-        currency: workspace.settings.currency,
-        summary: calculateFeeSummary(workspace),
-        feeRecords: workspace.feeRecords
-    };
+  const workspace = loadWorkspace();
+  const exportData = {
+    exportedAt: new Date().toISOString(),
+    schoolName: workspace.settings.schoolName,
+    currency: workspace.settings.currency,
+    summary: calculateFeeSummary(workspace),
+    feeRecords: workspace.feeRecords,
+  };
 
-    downloadJson("school-fee-ledger.json", exportData);
-    showStatus("Fee ledger JSON exported.", "success");
+  downloadJson("school-fee-ledger.json", exportData);
+  showStatus("Fee ledger JSON exported.", "success");
 }
 
 function loadFeeOptions() {
-    const workspace = loadWorkspace();
-    const studentOptions = workspace.students.map((student) => `
+  const workspace = loadWorkspace();
+  const studentOptions = workspace.students
+    .map(
+      (student) => `
     <option value="${student.id}">${escapeHtml(student.firstName)} ${escapeHtml(student.lastName)} · ${escapeHtml(student.classGrade)}-${escapeHtml(student.section)}</option>
-  `).join("");
+  `,
+    )
+    .join("");
 
-    $("#studentId").html(studentOptions);
+  $("#studentId").html(studentOptions);
 
-    const classes = [...new Set(workspace.students.map((student) => student.classGrade))].sort();
+  const classes = [
+    ...new Set(workspace.students.map((student) => student.classGrade)),
+  ].sort();
 
-    $("#filterClass").html(`
+  $("#filterClass").html(`
     <option value="">All classes</option>
     ${classes.map((item) => `<option>${escapeHtml(item)}</option>`).join("")}
   `);
 }
 
 function loadFeeReceiptOptions() {
-    const workspace = loadWorkspace();
+  const workspace = loadWorkspace();
 
-    $("#receiptFeeId").html(workspace.feeRecords.map((record) => `
+  $("#receiptFeeId").html(
+    workspace.feeRecords
+      .map(
+        (record) => `
     <option value="${record.id}">${escapeHtml(getStudentName(workspace, record.studentId))} · ${escapeHtml(record.month)} · ${escapeHtml(record.status)}</option>
-  `).join(""));
+  `,
+      )
+      .join(""),
+  );
 }
 
 function resetFeeForm() {
-    $("#feeFormTitle").text("Record Fee");
-    $("#feeForm")[0].reset();
-    $("#feeId").val("");
-    $("#month").val("July 2026");
-    $("#tuitionFee").val(8000);
-    $("#transportFee").val(1500);
-    $("#examFee").val(500);
-    $("#amountPaid").val(0);
-    $("#status").val("Unpaid");
-    $("#dueDate").val("2026-07-10");
-    $("#paidDate").val("");
+  $("#feeFormTitle").text("Record Fee");
+  $("#feeForm")[0].reset();
+  $("#feeId").val("");
+  $("#month").val("July 2026");
+  $("#tuitionFee").val(8000);
+  $("#transportFee").val(1500);
+  $("#examFee").val(500);
+  $("#amountPaid").val(0);
+  $("#status").val("Unpaid");
+  $("#dueDate").val("2026-07-10");
+  $("#paidDate").val("");
 }
 
 $(document).ready(function () {
-    $("#sidebarMount").html(renderSidebar("fee-tracking"));
-    applyThemeSettings();
-    setActiveNav();
+  $("#sidebarMount").html(renderSidebar("fee-tracking"));
+  applyThemeSettings();
+  setActiveNav();
 
-    loadFeeOptions();
-    resetFeeForm();
-    renderFeeRecords();
-    renderReceiptPreview($("#receiptFeeId").val());
+  loadFeeOptions();
+  resetFeeForm();
+  renderFeeRecords();
+  renderReceiptPreview($("#receiptFeeId").val());
 
-    $("#feeForm").on("submit", function (event) {
-        event.preventDefault();
-        createFeeRecord();
-    });
+  $("#feeForm").on("submit", function (event) {
+    event.preventDefault();
+    createFeeRecord();
+  });
 
-    $("#resetFeeFormBtn").on("click", resetFeeForm);
-    $("#exportFeeLedgerBtn").on("click", exportFeeLedger);
-    $("#feeSearch, #filterClass, #filterStatus, #filterMonth").on("input change", filterFeeRecords);
+  $("#resetFeeFormBtn").on("click", resetFeeForm);
+  $("#exportFeeLedgerBtn").on("click", exportFeeLedger);
+  $("#feeSearch, #filterClass, #filterStatus, #filterMonth").on(
+    "input change",
+    filterFeeRecords,
+  );
 
-    $("#receiptFeeId").on("change", function () {
-        renderReceiptPreview($(this).val());
-    });
+  $("#receiptFeeId").on("change", function () {
+    renderReceiptPreview($(this).val());
+  });
 });
